@@ -154,7 +154,10 @@ Na Sprint 0 o login é **preliminar** (valida o formulário e libera a navegaç�
 
 ## Telas (Claro / Escuro)
 
-_Prints a adicionar._
+<img width="1364" height="944" alt="image" src="https://github.com/user-attachments/assets/a2af289b-942c-40da-86b7-9d7cf8c37ddc" />
+
+<img width="1364" height="943" alt="image" src="https://github.com/user-attachments/assets/29a07ec9-9c37-4a3e-99ab-210ca273c874" />
+
 
 ## Vídeo de demonstração
 
