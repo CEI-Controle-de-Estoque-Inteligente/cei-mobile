@@ -31,10 +31,10 @@ O **app mobile** leva para o celular os fluxos do dia a dia de quem está no bal
 
 | Nome | GitHub | Papel | Responsabilidades técnicas |
 |---|---|---|---|
-| João Vitor da Silva | @USUARIO | Tech Lead / Arquiteto | Estrutura do projeto, padrão MVVM, revisão de PRs |
-| NOME 2 | @USUARIO | UI/UX & Design System | Tema, tokens, biblioteca de componentes, acessibilidade |
-| NOME 3 | @USUARIO | Dados & Persistência | Modelagem, sqflite, sincronização, repositórios |
-| NOME 4 | @USUARIO | Backend & Integrações / QA | Supabase (Auth, RLS), APIs externas, testes, PROMPT_LOG |
+| João Vitor da Silva | @JoaooVitorSilva | Tech Lead / Arquiteto | Estrutura do projeto, padrão MVVM, revisão de PRs |
+| João Volkmann | @JoaoVolkmann | UI/UX & Design System | Tema, tokens, biblioteca de componentes, acessibilidade |
+| Andrey Adrian Lazorotto | @andreyLazarotto | Dados & Persistência | Modelagem, sqflite, sincronização, repositórios |
+| Isaac de Lima Fonseca | @USUARIO | Backend & Integrações / QA | Supabase (Auth, RLS), APIs externas, testes, PROMPT_LOG |
 
 > Todos os integrantes codificam; os papéis indicam liderança de área.
 
