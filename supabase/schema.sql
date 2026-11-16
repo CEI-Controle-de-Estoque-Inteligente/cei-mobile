@@ -514,3 +514,12 @@ begin
   select count(*) into v_total from produtos where empresa_id = v_empresa;
   return v_total;
 end $$;
+
+-- ---------------------------------------------------------------------------
+-- Permissões da API (explícitas, não dependem da opção "expose new tables").
+-- O acesso linha a linha continua controlado pelo RLS acima.
+-- ---------------------------------------------------------------------------
+grant usage on schema public to anon, authenticated;
+grant select, insert, update, delete on all tables in schema public to authenticated;
+grant execute on all functions in schema public to authenticated;
+grant execute on function public.empresa_por_codigo(text) to anon;
