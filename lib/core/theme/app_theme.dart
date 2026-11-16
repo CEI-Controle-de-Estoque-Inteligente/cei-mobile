@@ -100,13 +100,13 @@ abstract final class AppTheme {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          minimumSize: const Size.fromHeight(AppSizes.minTouchTarget),
+          minimumSize: const Size(64, AppSizes.minTouchTarget),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdAll),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          minimumSize: const Size.fromHeight(AppSizes.minTouchTarget),
+          minimumSize: const Size(64, AppSizes.minTouchTarget),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdAll),
         ),
       ),

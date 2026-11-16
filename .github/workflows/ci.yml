@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  analyze-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          # Mesma versão usada pela equipe (evita avisos de APIs novas da 3.50).
+          flutter-version: 3.47.8
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test --coverage
+      - name: Resumo de cobertura
+        run: |
+          total=$(grep -c "^DA:" coverage/lcov.info || true)
+          hit=$(grep "^DA:" coverage/lcov.info | grep -vc ",0$" || true)
+          echo "Linhas cobertas: $hit de $total" >> "$GITHUB_STEP_SUMMARY"

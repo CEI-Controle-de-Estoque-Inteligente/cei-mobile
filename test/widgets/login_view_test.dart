@@ -9,27 +9,28 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> _pumpLogin(WidgetTester tester) async {
+import '../helpers/fakes.dart';
+
+Future<void> _pumpLogin(WidgetTester tester, {ThemeData? theme}) async {
   SharedPreferences.setMockInitialValues({});
   final preferences = await PreferencesService.create();
+  final repo = FakeAuthRepository(perfil: perfilFake());
 
   await tester.pumpWidget(
     MultiProvider(
       providers: [
+        Provider<AuthRepository>.value(value: repo),
         ChangeNotifierProvider(create: (_) => ThemeViewModel(preferences)),
-        ChangeNotifierProvider(
-          create: (_) => SessionViewModel(PreliminaryAuthRepository()),
-        ),
+        ChangeNotifierProvider(create: (_) => SessionViewModel(repo, preferences)),
       ],
-      child: MaterialApp(theme: AppTheme.light, home: const LoginView()),
+      child: MaterialApp(theme: theme ?? AppTheme.light, home: const LoginView()),
     ),
   );
+  await tester.pump();
 }
 
 void main() {
-  testWidgets('login exibe erros de validação com campos vazios', (
-    tester,
-  ) async {
+  testWidgets('login exibe erros de validação com campos vazios', (tester) async {
     await _pumpLogin(tester);
 
     await tester.ensureVisible(find.text('Entrar'));
@@ -40,12 +41,24 @@ void main() {
     expect(find.text('Informe a senha'), findsOneWidget);
   });
 
-  testWidgets('login não estoura em tela pequena (360x640)', (tester) async {
+  testWidgets('login não estoura em tela pequena (360x640) com fonte 1.3x', (tester) async {
     tester.view.physicalSize = const Size(360, 640);
     tester.view.devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = 1.3;
     addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
 
     await _pumpLogin(tester);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('login funciona no tema escuro e em paisagem', (tester) async {
+    tester.view.physicalSize = const Size(640, 360);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    await _pumpLogin(tester, theme: AppTheme.dark);
+    expect(tester.takeException(), isNull);
+    expect(find.text('Entre na sua conta'), findsOneWidget);
   });
 }

@@ -1,17 +1,18 @@
 import 'package:flutter/foundation.dart';
 
+import '../../../core/errors/app_exception.dart';
 import '../../../data/repositories/auth_repository.dart';
-import 'session_viewmodel.dart';
 
 /// Estado da tela de login: carregando / erro / sucesso (C1.6, C5.3).
 class LoginViewModel extends ChangeNotifier {
-  LoginViewModel(this._session);
+  LoginViewModel(this._auth);
 
-  final SessionViewModel _session;
+  final AuthRepository _auth;
 
   bool _isLoading = false;
   String? _errorMessage;
   bool _obscurePassword = true;
+  bool _disposed = false;
 
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
@@ -19,32 +20,31 @@ class LoginViewModel extends ChangeNotifier {
 
   void togglePasswordVisibility() {
     _obscurePassword = !_obscurePassword;
-    notifyListeners();
+    _notify();
   }
 
-  /// Retorna `true` quando o login foi concluído com sucesso.
+  /// Retorna `true` quando o login foi concluído. Em caso de sucesso, a
+  /// sessão muda e o roteador leva o usuário para a tela inicial.
   Future<bool> submit({required String email, required String password}) async {
     _isLoading = true;
     _errorMessage = null;
-    notifyListeners();
+    _notify();
 
     try {
-      await _session.signIn(email: email.trim(), password: password);
+      await _auth.entrar(email: email, senha: password);
       return true;
-    } on AuthException catch (e) {
+    } on AppException catch (e) {
       _errorMessage = e.message;
-      return false;
-    } catch (_) {
-      _errorMessage = 'Não foi possível entrar agora. Tente novamente.';
       return false;
     } finally {
       _isLoading = false;
-      // O roteador pode descartar esta tela logo após o login.
-      if (!_disposed) notifyListeners();
+      _notify(); // O roteador pode ter descartado a tela neste ponto.
     }
   }
 
-  bool _disposed = false;
+  void _notify() {
+    if (!_disposed) notifyListeners();
+  }
 
   @override
   void dispose() {

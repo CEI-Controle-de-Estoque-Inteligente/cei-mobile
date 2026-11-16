@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-enum CeiButtonVariant { primary, secondary }
+enum CeiButtonVariant { primary, secondary, text }
 
 /// Botão padrão do app, com estado de carregamento embutido (C1.3 / C1.6).
+/// Por padrão ocupa toda a largura disponível ([expand]).
 class CeiButton extends StatelessWidget {
   const CeiButton({
     super.key,
@@ -11,6 +12,7 @@ class CeiButton extends StatelessWidget {
     this.icon,
     this.isLoading = false,
     this.variant = CeiButtonVariant.primary,
+    this.expand = true,
   });
 
   final String label;
@@ -18,6 +20,7 @@ class CeiButton extends StatelessWidget {
   final IconData? icon;
   final bool isLoading;
   final CeiButtonVariant variant;
+  final bool expand;
 
   @override
   Widget build(BuildContext context) {
@@ -35,20 +38,18 @@ class CeiButton extends StatelessWidget {
             ],
           );
 
+    final button = switch (variant) {
+      CeiButtonVariant.primary => FilledButton(onPressed: action, child: child),
+      CeiButtonVariant.secondary => OutlinedButton(onPressed: action, child: child),
+      CeiButtonVariant.text => TextButton(onPressed: action, child: child),
+    };
+
     return Semantics(
       button: true,
+      enabled: action != null,
       label: isLoading ? '$label, carregando' : label,
       excludeSemantics: true,
-      child: switch (variant) {
-        CeiButtonVariant.primary => FilledButton(
-            onPressed: action,
-            child: child,
-          ),
-        CeiButtonVariant.secondary => OutlinedButton(
-            onPressed: action,
-            child: child,
-          ),
-      },
+      child: expand ? SizedBox(width: double.infinity, child: button) : button,
     );
   }
 }
