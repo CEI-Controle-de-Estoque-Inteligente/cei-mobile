@@ -1,55 +1,36 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/router/app_routes.dart';
 import '../../../shared/widgets/cei_logo.dart';
+import '../../../shared/widgets/state_views.dart';
 import '../../auth/viewmodels/session_viewmodel.dart';
 
-class SplashView extends StatefulWidget {
+/// Exibida enquanto a sessão é restaurada. O roteador sai daqui sozinho
+/// quando o estado da sessão é conhecido.
+class SplashView extends StatelessWidget {
   const SplashView({super.key});
 
   @override
-  State<SplashView> createState() => _SplashViewState();
-}
-
-class _SplashViewState extends State<SplashView> {
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer(const Duration(milliseconds: 1200), _goNext);
-  }
-
-  void _goNext() {
-    if (!mounted) return;
-    final session = context.read<SessionViewModel>();
-    context.go(session.isAuthenticated ? AppRoutes.home : AppRoutes.login);
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel(); // C2.6: todo recurso alocado é liberado
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    final session = context.watch<SessionViewModel>();
+
+    return Scaffold(
       body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CeiLogo(size: 96),
-              SizedBox(height: 32),
-              CircularProgressIndicator(),
-            ],
-          ),
-        ),
+        child: session.status == SessionStatus.erro
+            ? ErrorView(
+                message: session.erro ?? 'Não foi possível carregar seus dados.',
+                onRetry: session.recarregarPerfil,
+              )
+            : const Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Hero(tag: 'cei-logo', child: CeiLogo(size: 96)),
+                    SizedBox(height: 32),
+                    CircularProgressIndicator(),
+                  ],
+                ),
+              ),
       ),
     );
   }

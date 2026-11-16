@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -31,9 +32,7 @@ class _CeiAppState extends State<CeiApp> {
 
   @override
   Widget build(BuildContext context) {
-    final themeMode = context.select<ThemeViewModel, ThemeMode>(
-      (vm) => vm.themeMode,
-    );
+    final themeMode = context.select<ThemeViewModel, ThemeMode>((vm) => vm.themeMode);
 
     return MaterialApp.router(
       title: 'CEI - Controle de Estoque Inteligente',
@@ -42,6 +41,9 @@ class _CeiAppState extends State<CeiApp> {
       darkTheme: AppTheme.dark,
       themeMode: themeMode,
       routerConfig: _router,
+      locale: const Locale('pt', 'BR'),
+      supportedLocales: const [Locale('pt', 'BR')],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
     );
   }
 }
