@@ -52,7 +52,7 @@ class ProdutoCard extends StatelessWidget {
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   StatusBadge.estoque(context, produto.status),
-                  if (trailing != null) trailing!,
+                  ?trailing,
                 ],
               ),
               const SizedBox(height: AppSpacing.sm),

@@ -13,6 +13,8 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          # Mesma versão usada pela equipe (evita avisos de APIs novas da 3.50).
+          flutter-version: 3.47.8
           cache: true
       - run: flutter pub get
       - run: flutter analyze
