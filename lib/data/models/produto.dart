@@ -1,4 +1,5 @@
 import 'json_utils.dart';
+import 'tabela_descontos.dart';
 
 /// Situação do nível de estoque (badges OK / Atenção / Baixo / Crítico).
 enum StockStatus {
@@ -46,6 +47,8 @@ class Produto {
     this.validade,
     this.ativo = true,
     this.updatedAt,
+    this.promocaoPercentual,
+    this.precoPromocional,
   });
 
   final String id;
@@ -60,6 +63,15 @@ class Produto {
   final DateTime? validade;
   final bool ativo;
   final DateTime? updatedAt;
+
+  /// Promoção aplicada pelo gerente (null = sem promoção).
+  final int? promocaoPercentual;
+  final double? precoPromocional;
+
+  bool get emPromocao => promocaoPercentual != null && precoPromocional != null;
+
+  /// Preço cobrado na venda (promocional quando houver).
+  double get precoVenda => emPromocao ? precoPromocional! : preco;
 
   StockStatus get status =>
       StockStatus.calcular(quantidade: quantidade, minimo: estoqueMinimo);
@@ -93,15 +105,17 @@ class Produto {
   }
 
   /// RN002 (Estoque): sugestão automática de desconto para itens com
-  /// menos de 7 dias para vencer. Quanto mais perto, maior o desconto.
-  int? descontoSugerido([DateTime? hoje]) {
+  /// menos de 7 dias para vencer, conforme a tabela definida pelo gerente.
+  /// Não sugere quando já há promoção ativa ou não há estoque.
+  int? descontoSugerido({TabelaDescontos tabela = TabelaDescontos.padrao, DateTime? hoje}) {
     final dias = diasParaVencer(hoje);
-    if (dias == null || dias < 0 || dias >= 7 || quantidade == 0) return null;
-    if (dias <= 1) return 50;
-    if (dias <= 3) return 30;
-    if (dias <= 5) return 20;
-    return 10;
+    if (dias == null || quantidade == 0 || emPromocao) return null;
+    return tabela.percentualPara(dias);
   }
+
+  /// Preço com [percentual] de desconto, arredondado como no banco.
+  double precoComDesconto(int percentual) =>
+      (preco * (100 - percentual) / 100 * 100).roundToDouble() / 100;
 
   double get valorEmEstoque => preco * quantidade;
 
@@ -121,6 +135,8 @@ class Produto {
       validade: JsonUtils.toDate(json['validade']),
       ativo: (json['ativo'] as bool?) ?? true,
       updatedAt: JsonUtils.toDate(json['updated_at']),
+      promocaoPercentual: json['promocao_percentual'] == null ? null : JsonUtils.toInt(json['promocao_percentual']),
+      precoPromocional: json['preco_promocional'] == null ? null : JsonUtils.toDouble(json['preco_promocional']),
     );
   }
 
@@ -153,6 +169,8 @@ class Produto {
       validade: JsonUtils.toDate(map['validade']),
       ativo: map['ativo'] == 1,
       updatedAt: JsonUtils.toDate(map['updated_at']),
+      promocaoPercentual: map['promocao_percentual'] == null ? null : JsonUtils.toInt(map['promocao_percentual']),
+      precoPromocional: map['preco_promocional'] == null ? null : JsonUtils.toDouble(map['preco_promocional']),
     );
   }
 
@@ -170,6 +188,8 @@ class Produto {
     'validade': validade == null ? null : JsonUtils.dateOnly(validade!),
     'ativo': ativo ? 1 : 0,
     'updated_at': updatedAt?.toIso8601String(),
+    'promocao_percentual': promocaoPercentual,
+    'preco_promocional': precoPromocional,
   };
 
   Produto copyWith({
@@ -198,13 +218,19 @@ class Produto {
       validade: limparValidade ? null : (validade ?? this.validade),
       ativo: ativo ?? this.ativo,
       updatedAt: updatedAt,
+      promocaoPercentual: promocaoPercentual,
+      precoPromocional: precoPromocional,
     );
   }
 
   @override
   bool operator ==(Object other) =>
-      other is Produto && other.id == id && other.updatedAt == updatedAt && other.quantidade == quantidade;
+      other is Produto &&
+      other.id == id &&
+      other.updatedAt == updatedAt &&
+      other.quantidade == quantidade &&
+      other.promocaoPercentual == promocaoPercentual;
 
   @override
-  int get hashCode => Object.hash(id, updatedAt, quantidade);
+  int get hashCode => Object.hash(id, updatedAt, quantidade, promocaoPercentual);
 }

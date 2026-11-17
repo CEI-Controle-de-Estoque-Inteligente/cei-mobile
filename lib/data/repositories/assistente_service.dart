@@ -2,6 +2,7 @@ import '../../core/errors/app_exception.dart';
 import '../../core/utils/formatters.dart';
 import '../models/perfil.dart';
 import '../models/produto.dart';
+import '../models/tabela_descontos.dart';
 import 'equipe_repository.dart';
 import 'produto_repository.dart';
 
@@ -120,19 +121,29 @@ class AssistenteService {
   }
 
   Future<String> _desconto(Perfil perfil) async {
-    final itens = (await _todos(perfil, FiltroEstoque.vencendo))
-        .where((p) => p.descontoSugerido() != null)
-        .toList();
-    if (itens.isEmpty) {
+    final tabela = perfil.empresa?.descontos ?? TabelaDescontos.padrao;
+    final vencendo = await _todos(perfil, FiltroEstoque.vencendo);
+    final sugeridos = vencendo.where((p) => p.descontoSugerido(tabela: tabela) != null).toList();
+    final emPromocao = vencendo.where((p) => p.emPromocao).toList();
+    if (sugeridos.isEmpty && emPromocao.isEmpty) {
       return 'Nenhum produto com menos de 7 dias para vencer. Não há descontos a sugerir agora.';
     }
-    final linhas = itens.take(15).map((p) {
-      final desconto = p.descontoSugerido()!;
-      final novoPreco = p.preco * (100 - desconto) / 100;
-      return '• ${p.nome}: $desconto% off → ${Formatters.currency(novoPreco)} '
-          '(vence em ${p.diasParaVencer()} dia(s))';
-    });
-    return 'Sugestão de descontos para girar o estoque:\n${linhas.join('\n')}';
+    final partes = <String>[];
+    if (sugeridos.isNotEmpty) {
+      final linhas = sugeridos.take(15).map((p) {
+        final desconto = p.descontoSugerido(tabela: tabela)!;
+        return '• ${p.nome}: $desconto% off → ${Formatters.currency(p.precoComDesconto(desconto))} '
+            '(vence em ${p.diasParaVencer()} dia(s))';
+      });
+      partes.add('Sugestão de descontos para girar o estoque:\n${linhas.join('\n')}');
+    }
+    if (emPromocao.isNotEmpty) {
+      final linhas = emPromocao.take(10).map(
+        (p) => '• ${p.nome}: -${p.promocaoPercentual}% (${Formatters.currency(p.precoVenda)})',
+      );
+      partes.add('Já em promoção:\n${linhas.join('\n')}');
+    }
+    return partes.join('\n\n');
   }
 
   Future<String> _resumo(Perfil perfil) async {

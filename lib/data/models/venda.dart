@@ -12,6 +12,7 @@ class Venda {
     this.operadorId,
     this.operadorNome,
     this.pendente = false,
+    this.descontoPercentual = 0,
   });
 
   final String id;
@@ -27,6 +28,9 @@ class Venda {
   /// Registrada offline e ainda não enviada ao servidor.
   final bool pendente;
 
+  /// Desconto de promoção aplicado no momento da venda (0 = preço cheio).
+  final int descontoPercentual;
+
   factory Venda.fromJson(Map<String, dynamic> json) {
     final operador = json['perfis'];
     return Venda(
@@ -39,6 +43,7 @@ class Venda {
       criadaEm: JsonUtils.toDate(json['created_at']) ?? DateTime.now(),
       operadorId: json['operador_id'] as String?,
       operadorNome: operador is Map<String, dynamic> ? operador['nome'] as String? : null,
+      descontoPercentual: JsonUtils.toInt(json['desconto_percentual']),
     );
   }
 }

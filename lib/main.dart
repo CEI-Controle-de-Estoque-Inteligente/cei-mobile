@@ -22,6 +22,7 @@ import 'data/repositories/auth_repository.dart';
 import 'data/repositories/equipe_repository.dart';
 import 'data/repositories/produto_repository.dart';
 import 'data/repositories/sync_service.dart';
+import 'data/models/tabela_descontos.dart';
 import 'data/repositories/venda_repository.dart';
 import 'features/auth/viewmodels/session_viewmodel.dart';
 import 'features/settings/viewmodels/theme_viewmodel.dart';
@@ -92,6 +93,9 @@ Future<void> main() async {
             preferences,
             limparDadosLocais: DatabaseHelper.instance.limparTudo,
           )..start(),
+        ),
+        ProxyProvider<SessionViewModel, TabelaDescontos>(
+          update: (_, session, _) => session.perfil?.empresa?.descontos ?? TabelaDescontos.padrao,
         ),
       ],
       child: const CeiApp(),

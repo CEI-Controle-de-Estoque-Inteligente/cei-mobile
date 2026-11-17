@@ -117,6 +117,17 @@ class SupabaseProdutoDataSource {
     return Produto.fromJson(result);
   }
 
+  /// [percentual] 0 encerra a promoção. Só o gerente (validado no banco).
+  Future<Produto> aplicarPromocao(String produtoId, int percentual) async {
+    final result = await _client
+        .rpc<Map<String, dynamic>>(
+          'aplicar_promocao',
+          params: {'p_produto': produtoId, 'p_percentual': percentual},
+        )
+        .timeout(_timeout);
+    return Produto.fromJson(result);
+  }
+
   Future<List<Movimentacao>> historico(String produtoId, {required int offset, required int limite}) async {
     final rows = await _client
         .from('movimentacoes')

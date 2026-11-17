@@ -183,6 +183,7 @@ class _VendaTile extends StatelessWidget {
       '${venda.quantidade} x ${Formatters.currency(venda.precoUnitario)}',
       '${Formatters.date(venda.criadaEm)} às ${Formatters.time(venda.criadaEm)}',
       if (mostrarOperador && venda.operadorNome != null) venda.operadorNome!,
+      if (venda.descontoPercentual > 0) 'promoção -${venda.descontoPercentual}%',
       if (venda.pendente) 'aguardando envio',
     ].join(' • ');
 

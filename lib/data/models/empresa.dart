@@ -1,9 +1,12 @@
+import 'tabela_descontos.dart';
+
 class Empresa {
   const Empresa({
     required this.id,
     required this.nome,
     this.cnpj,
     this.codigoConvite,
+    this.descontos = TabelaDescontos.padrao,
   });
 
   final String id;
@@ -13,11 +16,15 @@ class Empresa {
   /// Código que funcionários usam para se cadastrar na empresa.
   final String? codigoConvite;
 
+  /// Tabela de descontos sugeridos, definida pelo gerente.
+  final TabelaDescontos descontos;
+
   factory Empresa.fromJson(Map<String, dynamic> json) => Empresa(
     id: json['id'] as String,
     nome: (json['nome'] as String?) ?? '',
     cnpj: json['cnpj'] as String?,
     codigoConvite: json['codigo_convite'] as String?,
+    descontos: TabelaDescontos.fromJson(json),
   );
 
   Map<String, dynamic> toJson() => {
@@ -25,6 +32,7 @@ class Empresa {
     'nome': nome,
     'cnpj': cnpj,
     'codigo_convite': codigoConvite,
+    ...descontos.toJson(),
   };
 }
 

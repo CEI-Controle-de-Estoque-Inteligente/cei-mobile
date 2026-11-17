@@ -40,7 +40,8 @@ class NovaVendaViewModel extends ChangeNotifier {
   bool get salvando => _salvando;
   String? get erro => _erro;
   String get busca => _busca;
-  double get total => (_selecionado?.preco ?? 0) * _quantidade;
+  /// Usa o preço promocional quando o produto está em promoção.
+  double get total => (_selecionado?.precoVenda ?? 0) * _quantidade;
   bool get podeConfirmar =>
       _selecionado != null && _quantidade > 0 && _quantidade <= _selecionado!.quantidade && !_salvando;
 

@@ -21,6 +21,7 @@ import '../../../shared/widgets/validade_chip.dart';
 import '../../auth/viewmodels/session_viewmodel.dart';
 import '../viewmodels/produto_detalhe_viewmodel.dart';
 import 'produtos_view.dart';
+import 'promocao_card.dart';
 
 class ProdutoDetalheView extends StatelessWidget {
   const ProdutoDetalheView({super.key, required this.produtoId, this.inicial});
@@ -62,6 +63,20 @@ class _DetalheBody extends StatelessWidget {
     final vm = context.read<ProdutoDetalheViewModel>();
     final atualizado = await context.push<Produto>(AppRoutes.produtoEditar(produto.id), extra: produto);
     if (atualizado != null) vm.atualizar(atualizado);
+  }
+
+  Future<void> _aplicarPromocao(BuildContext context, int percentual) async {
+    final vm = context.read<ProdutoDetalheViewModel>();
+    try {
+      await vm.aplicarPromocao(percentual);
+      if (!context.mounted) return;
+      AppFeedback.success(
+        context,
+        percentual == 0 ? 'Promoção encerrada.' : 'Promoção de $percentual% aplicada. As vendas já usam o novo preço.',
+      );
+    } on AppException catch (e) {
+      if (context.mounted) AppFeedback.error(context, e.message);
+    }
   }
 
   Future<void> _excluir(BuildContext context, Produto produto) async {
@@ -172,6 +187,11 @@ class _DetalheBody extends StatelessWidget {
                       ),
                       const Divider(height: AppSpacing.lg),
                       _Info(label: 'Preço unitário', valor: Formatters.currency(produto.preco)),
+                      if (produto.emPromocao)
+                        _Info(
+                          label: 'Preço promocional (-${produto.promocaoPercentual}%)',
+                          valor: Formatters.currency(produto.precoVenda),
+                        ),
                       _Info(label: 'Valor em estoque', valor: Formatters.currency(produto.valorEmEstoque)),
                       if (produto.categoria != null) _Info(label: 'Categoria', valor: produto.categoria!),
                       if (produto.codigoBarras != null) _Info(label: 'Código de barras', valor: produto.codigoBarras!),
@@ -192,6 +212,14 @@ class _DetalheBody extends StatelessWidget {
             sliver: SliverToBoxAdapter(
               child: Column(
                 children: [
+                  if (perfil?.pode(Modulo.promocoes) ?? false) ...[
+                    PromocaoCard(
+                      produto: produto,
+                      salvando: vm.salvandoPromocao,
+                      onAplicar: (percentual) => _aplicarPromocao(context, percentual),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                  ],
                   if (perfil?.pode(Modulo.estoqueEditar) ?? false)
                     CeiButton(
                       label: 'Registrar entrada / saída',

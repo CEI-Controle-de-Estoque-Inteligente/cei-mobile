@@ -24,6 +24,7 @@ abstract final class AppRoutes {
   static const String configuracoes = '/configuracoes';
   static const String alterarSenha = '/perfil/senha';
   static const String pendencias = '/pendencias';
+  static const String descontos = '/configuracoes/descontos';
   static const String semPermissao = '/sem-permissao';
 
   static String produto(String id) => '/estoque/produto/$id';
@@ -44,6 +45,7 @@ abstract final class AppRoutes {
     if (location.startsWith(vendas)) return Modulo.vendas;
     if (location.startsWith(equipe)) return Modulo.equipe;
     if (location == assistente) return Modulo.assistente;
+    if (location == descontos) return Modulo.promocoes;
     return null;
   }
 }

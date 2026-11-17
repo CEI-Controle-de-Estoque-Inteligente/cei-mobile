@@ -29,13 +29,13 @@ void main() {
     });
 
     test('sugere desconto só com menos de 7 dias e estoque disponível', () {
-      expect(produtoFake(validade: hoje.add(const Duration(days: 7))).descontoSugerido(hoje), isNull);
-      expect(produtoFake(validade: hoje.add(const Duration(days: 6))).descontoSugerido(hoje), 10);
-      expect(produtoFake(validade: hoje.add(const Duration(days: 4))).descontoSugerido(hoje), 20);
-      expect(produtoFake(validade: hoje.add(const Duration(days: 2))).descontoSugerido(hoje), 30);
-      expect(produtoFake(validade: hoje.add(const Duration(days: 1))).descontoSugerido(hoje), 50);
-      expect(produtoFake(quantidade: 0, validade: hoje.add(const Duration(days: 1))).descontoSugerido(hoje), isNull);
-      expect(produtoFake(validade: hoje.subtract(const Duration(days: 1))).descontoSugerido(hoje), isNull);
+      expect(produtoFake(validade: hoje.add(const Duration(days: 7))).descontoSugerido(hoje: hoje), isNull);
+      expect(produtoFake(validade: hoje.add(const Duration(days: 6))).descontoSugerido(hoje: hoje), 10);
+      expect(produtoFake(validade: hoje.add(const Duration(days: 4))).descontoSugerido(hoje: hoje), 20);
+      expect(produtoFake(validade: hoje.add(const Duration(days: 2))).descontoSugerido(hoje: hoje), 30);
+      expect(produtoFake(validade: hoje.add(const Duration(days: 1))).descontoSugerido(hoje: hoje), 50);
+      expect(produtoFake(quantidade: 0, validade: hoje.add(const Duration(days: 1))).descontoSugerido(hoje: hoje), isNull);
+      expect(produtoFake(validade: hoje.subtract(const Duration(days: 1))).descontoSugerido(hoje: hoje), isNull);
     });
   });
 

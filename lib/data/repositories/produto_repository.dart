@@ -41,6 +41,9 @@ abstract interface class ProdutoRepository {
 
   Future<Pagina<Movimentacao>> historico(String produtoId, {int pagina = 0, int tamanho = 20});
 
+  /// Aplica (1 a 90%) ou encerra (0) a promoção do produto.
+  Future<Produto> aplicarPromocao(Produto produto, int percentual);
+
   Future<int> popularDemo();
 }
 
@@ -237,6 +240,17 @@ class ProdutoRepositoryImpl implements ProdutoRepository {
       return Pagina(itens: itens, temMais: itens.length == tamanho);
     } catch (e) {
       throw ErrorMapper.map(e);
+    }
+  }
+
+  @override
+  Future<Produto> aplicarPromocao(Produto produto, int percentual) async {
+    try {
+      final atualizado = await _remote.aplicarPromocao(produto.id, percentual);
+      await _local.salvar(atualizado);
+      return atualizado;
+    } catch (e) {
+      throw _exigeConexao(e);
     }
   }
 

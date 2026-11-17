@@ -10,6 +10,9 @@ enum Modulo {
   vendasTodas,
   equipe,
   assistente,
+
+  /// Tabela de descontos e promoções (somente gerente).
+  promocoes,
 }
 
 enum Cargo {

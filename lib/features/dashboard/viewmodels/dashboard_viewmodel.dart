@@ -4,6 +4,7 @@ import '../../../core/errors/app_exception.dart';
 import '../../../data/models/dashboard_resumo.dart';
 import '../../../data/models/perfil.dart';
 import '../../../data/models/produto.dart';
+import '../../../data/models/tabela_descontos.dart';
 import '../../../data/repositories/equipe_repository.dart';
 import '../../../data/repositories/produto_repository.dart';
 
@@ -24,10 +25,11 @@ List<Recomendacao> gerarRecomendacoes({
   required List<Produto> criticos,
   required List<Produto> vencendo,
   List<GiroProduto> giro = const [],
+  TabelaDescontos tabela = TabelaDescontos.padrao,
 }) {
   final recomendacoes = <Recomendacao>[];
   for (final p in vencendo) {
-    final desconto = p.descontoSugerido();
+    final desconto = p.descontoSugerido(tabela: tabela);
     if (desconto != null) {
       recomendacoes.add(
         Recomendacao(
@@ -130,7 +132,12 @@ class DashboardViewModel extends ChangeNotifier {
             ? 'Indicadores em tempo real indisponíveis sem conexão.'
             : e.message;
       }
-      _recomendacoes = gerarRecomendacoes(criticos: _criticos, vencendo: _vencendo, giro: giro);
+      _recomendacoes = gerarRecomendacoes(
+        criticos: _criticos,
+        vencendo: _vencendo,
+        giro: giro,
+        tabela: _perfil.empresa?.descontos ?? TabelaDescontos.padrao,
+      );
     } on AppException catch (e) {
       _erro = e.message;
     } finally {

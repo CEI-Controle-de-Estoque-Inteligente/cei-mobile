@@ -1,6 +1,7 @@
 import '../../core/errors/error_mapper.dart';
 import '../models/dashboard_resumo.dart';
 import '../models/perfil.dart';
+import '../models/tabela_descontos.dart';
 import '../remote/supabase_equipe_datasource.dart';
 
 class EquipeRepository {
@@ -11,6 +12,14 @@ class EquipeRepository {
   Future<List<Perfil>> listar() async {
     try {
       return await _remote.listar();
+    } catch (e) {
+      throw ErrorMapper.map(e);
+    }
+  }
+
+  Future<TabelaDescontos> atualizarDescontos(TabelaDescontos tabela) async {
+    try {
+      return await _remote.atualizarDescontos(tabela);
     } catch (e) {
       throw ErrorMapper.map(e);
     }
