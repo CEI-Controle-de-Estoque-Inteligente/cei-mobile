@@ -14,9 +14,13 @@ class CeiLogo extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
+    // FittedBox: quando falta altura (ex.: durante a animação Hero entre a
+    // splash e o login), o logo diminui em vez de estourar o layout.
     return Semantics(
       label: 'Logotipo CEI - Controle de Estoque Inteligente',
-      child: Column(
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
@@ -44,6 +48,7 @@ class CeiLogo extends StatelessWidget {
             ),
           ],
         ],
+        ),
       ),
     );
   }
