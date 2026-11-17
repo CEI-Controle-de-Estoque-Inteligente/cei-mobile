@@ -12,6 +12,8 @@ import '../../../data/repositories/sync_service.dart';
 import '../../../data/repositories/venda_repository.dart';
 import '../../../shared/widgets/app_feedback.dart';
 import '../../../shared/widgets/cei_button.dart';
+import '../../../shared/descontos_context.dart';
+import '../../../shared/widgets/preco_produto.dart';
 import '../../../shared/widgets/search_field.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../../../shared/widgets/status_badge.dart';
@@ -137,7 +139,7 @@ class _Busca extends StatelessWidget {
                       key: ValueKey(p.id),
                       title: Text(p.nome),
                       subtitle: Text('${p.quantidade} un. disponíveis'),
-                      trailing: Text(Formatters.currency(p.preco)),
+                      trailing: Text(Formatters.currency(p.precoVenda)),
                       onTap: () => vm.selecionar(p),
                     );
                   },
@@ -173,13 +175,15 @@ class _Resumo extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: AppSpacing.xs),
-                Text('${Formatters.currency(produto.preco)} / un. • ${produto.quantidade} em estoque'),
-                if (produto.descontoSugerido() != null)
+                PrecoProduto(produto: produto),
+                Text('${produto.quantidade} em estoque', style: textTheme.bodyMedium),
+                if (produto.descontoSugerido(tabela: tabelaDescontosDe(context)) != null)
                   Padding(
                     padding: const EdgeInsets.only(top: AppSpacing.sm),
                     child: Text(
-                      'Dica: vence em ${produto.diasParaVencer()} dia(s). '
-                      'Sugestão de ${produto.descontoSugerido()}% de desconto.',
+                      'Vence em ${produto.diasParaVencer()} dia(s). O gerente pode aplicar '
+                      '${produto.descontoSugerido(tabela: tabelaDescontosDe(context))}% de desconto '
+                      'na tela do produto.',
                       style: textTheme.bodySmall,
                     ),
                   ),

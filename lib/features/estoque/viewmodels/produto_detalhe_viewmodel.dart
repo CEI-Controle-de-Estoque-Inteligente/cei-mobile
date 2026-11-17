@@ -16,12 +16,14 @@ class ProdutoDetalheViewModel extends ChangeNotifier {
   Produto? _produto;
   bool _carregando = false;
   bool _excluindo = false;
+  bool _salvandoPromocao = false;
   String? _erro;
   bool _disposed = false;
 
   Produto? get produto => _produto;
   bool get carregando => _carregando;
   bool get excluindo => _excluindo;
+  bool get salvandoPromocao => _salvandoPromocao;
   String? get erro => _erro;
 
   Future<void> carregar() async {
@@ -41,6 +43,20 @@ class ProdutoDetalheViewModel extends ChangeNotifier {
   void atualizar(Produto produto) {
     _produto = produto;
     _notify();
+  }
+
+  /// Aplica (1 a 90%) ou encerra (0) a promoção.
+  Future<void> aplicarPromocao(int percentual) async {
+    final atual = _produto;
+    if (atual == null) return;
+    _salvandoPromocao = true;
+    _notify();
+    try {
+      _produto = await _repository.aplicarPromocao(atual, percentual);
+    } finally {
+      _salvandoPromocao = false;
+      _notify();
+    }
   }
 
   Future<void> excluir() async {

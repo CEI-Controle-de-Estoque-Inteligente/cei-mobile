@@ -8,13 +8,14 @@ import 'db_factory.dart';
 ///
 /// v1: cache de produtos.
 /// v2: fila de operações pendentes (vendas/movimentações feitas offline).
+/// v3: promoção nos produtos (percentual e preço promocional).
 class DatabaseHelper {
   DatabaseHelper._();
 
   static final DatabaseHelper instance = DatabaseHelper._();
 
   static const String _nomeBanco = 'cei_mobile.db';
-  static const int _versao = 2;
+  static const int _versao = 3;
 
   Database? _database;
   Completer<Database>? _abrindo;
@@ -58,10 +59,12 @@ class DatabaseHelper {
   Future<void> _onCreate(Database db, int version) async {
     await _criarV1(db);
     await _criarV2(db);
+    await _criarV3(db);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) await _criarV2(db);
+    if (oldVersion < 3) await _criarV3(db);
   }
 
   Future<void> _criarV1(Database db) async {
@@ -96,6 +99,11 @@ class DatabaseHelper {
         erro TEXT
       )
     ''');
+  }
+
+  Future<void> _criarV3(Database db) async {
+    await db.execute('ALTER TABLE produtos ADD COLUMN promocao_percentual INTEGER');
+    await db.execute('ALTER TABLE produtos ADD COLUMN preco_promocional REAL');
   }
 
   /// Usado no logout: os dados de uma empresa não ficam no aparelho.

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_theme.dart';
 import '../../data/models/produto.dart';
+import '../descontos_context.dart';
 import 'status_badge.dart';
 
 /// Alerta de validade com dias restantes e sugestão de desconto (< 7 dias).
@@ -26,7 +27,7 @@ class ValidadeChip extends StatelessWidget {
     final texto = dias < 0
         ? 'Vencido há ${-dias}d'
         : (dias == 0 ? 'Vence hoje' : 'Vence em ${dias}d');
-    final desconto = mostrarDesconto ? produto.descontoSugerido() : null;
+    final desconto = mostrarDesconto ? produto.descontoSugerido(tabela: tabelaDescontosDe(context)) : null;
 
     return Wrap(
       spacing: 6,

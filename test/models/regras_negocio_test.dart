@@ -27,6 +27,14 @@ void main() {
       expect(Cargo.estoquista.permite(Modulo.estoqueExcluir), isFalse);
     });
 
+    test('somente o gerente define descontos e aplica promoções', () {
+      expect(Cargo.gerente.permite(Modulo.promocoes), isTrue);
+      for (final c in [Cargo.vendedor, Cargo.caixa, Cargo.estoquista]) {
+        expect(c.permite(Modulo.promocoes), isFalse, reason: c.label);
+      }
+      expect(AppRoutes.moduloDe(AppRoutes.descontos), Modulo.promocoes);
+    });
+
     test('rotas exigem o módulo correto', () {
       expect(AppRoutes.moduloDe(AppRoutes.equipe), Modulo.equipe);
       expect(AppRoutes.moduloDe(AppRoutes.produtoNovo), Modulo.estoqueEditar);

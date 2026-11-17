@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_tokens.dart';
-import '../../core/utils/formatters.dart';
 import '../../data/models/produto.dart';
+import 'preco_produto.dart';
 import 'status_badge.dart';
 import 'stock_level_bar.dart';
 import 'validade_chip.dart';
@@ -64,7 +64,7 @@ class ProdutoCard extends StatelessWidget {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Text('${produto.quantidade} un.', style: textTheme.bodyMedium),
-                  Text(Formatters.currency(produto.preco), style: textTheme.bodyMedium),
+                  PrecoProduto(produto: produto, style: textTheme.bodyMedium),
                   ValidadeChip(produto: produto),
                 ],
               ),

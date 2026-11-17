@@ -21,6 +21,7 @@ import '../../features/home/views/home_shell.dart';
 import '../../features/home/views/sem_permissao_view.dart';
 import '../../features/perfil/views/alterar_senha_view.dart';
 import '../../features/perfil/views/perfil_view.dart';
+import '../../features/settings/views/descontos_view.dart';
 import '../../features/settings/views/pendencias_view.dart';
 import '../../features/settings/views/settings_view.dart';
 import '../../features/splash/views/splash_view.dart';
@@ -103,6 +104,7 @@ GoRouter createAppRouter(SessionViewModel session) {
       GoRoute(path: AppRoutes.configuracoes, builder: (_, _) => const SettingsView()),
       GoRoute(path: AppRoutes.alterarSenha, builder: (_, _) => const AlterarSenhaView()),
       GoRoute(path: AppRoutes.pendencias, builder: (_, _) => const PendenciasView()),
+      GoRoute(path: AppRoutes.descontos, builder: (_, _) => const DescontosView()),
       GoRoute(path: AppRoutes.semPermissao, builder: (_, _) => const SemPermissaoView()),
     ],
   );

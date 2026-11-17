@@ -25,6 +25,7 @@ Produto produtoFake({
   int maximo = 20,
   DateTime? validade,
   double preco = 10,
+  int? promocao,
 }) => Produto(
   id: id,
   empresaId: 'e1',
@@ -34,6 +35,8 @@ Produto produtoFake({
   estoqueMinimo: minimo,
   estoqueMaximo: maximo,
   validade: validade,
+  promocaoPercentual: promocao,
+  precoPromocional: promocao == null ? null : (preco * (100 - promocao)).round() / 100,
 );
 
 /// AuthRepository falso para testar ViewModels sem rede.

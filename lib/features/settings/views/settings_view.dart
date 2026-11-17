@@ -90,6 +90,13 @@ class SettingsView extends StatelessWidget {
                     onTap: () => context.go(AppRoutes.equipe),
                   ),
                   ListTile(
+                    leading: const Icon(Icons.sell_outlined),
+                    title: const Text('Tabela de descontos'),
+                    subtitle: const Text('Quanto sugerir para produtos perto do vencimento'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => context.push(AppRoutes.descontos),
+                  ),
+                  ListTile(
                     leading: const Icon(Icons.dataset_outlined),
                     title: const Text('Carregar dados de demonstração'),
                     subtitle: const Text('Produtos e vendas de exemplo para testar o app'),
